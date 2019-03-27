@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import hello.Admin;
 import hello.AdminRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 @Controller    // This means that this class is a Controller
 @RequestMapping(path = "/admin") // This means URL's start with /demo (after Application path)
@@ -43,11 +46,30 @@ public class AdminController {
         return "admin/list";
     }
 
-    @GetMapping(path = "/get_list")
+    @GetMapping(path = "get_list")
     @ResponseBody
-    public Iterable<Admin> getAllUsers() {
-        // This returns a JSON or XML with the users
-        return adminRepository.findAll();
+    public DataResponse<Admin> getAdminList(
+            Admin adminReq,
+            @RequestParam(defaultValue = "1", value = "page") String page,
+            @RequestParam(defaultValue = "10", value = "rows") String rows) {
+        long adminCount;
+        String total; //页数
+        Iterable<Admin> admins;
+        int records;
+        adminCount = adminRepository.count();
+        records = (int) adminCount;
+        admins = adminRepository.findAll();
+        int pageSize = Integer.valueOf(rows);
+        total = Integer.toString((records + pageSize - 1) / pageSize);
+        DataResponse<Admin> response = new DataResponse<>();
+        List<Admin> adminList = new ArrayList<>();
+        admins.forEach(admin -> adminList.add(admin));
+        response.setTotal(total);
+        response.setRows(adminList);
+        response.setPage(page);
+        response.setRecords(records);
+        return response;
     }
+
 
 }

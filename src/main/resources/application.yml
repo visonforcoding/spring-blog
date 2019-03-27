@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_sptest?useSSL=false
+    username: mysqluser
+    password: zxc123!@#
+  mvc:
+    static-path-pattern: /static/**

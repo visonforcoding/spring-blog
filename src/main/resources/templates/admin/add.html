@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
-<html th:replace="~{common/layout :: layout(~{::title}, ~{::content},~{::script})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{common/layout :: layout(~{::title}, ~{::content},~{::script},~{::links},~{::js})}" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>用户添加</title>
+    <th:block th:fragment="links"></th:block>
 </head>
 <body>
 <div class="container" id="content" th:fragment="content">
@@ -28,6 +29,7 @@
     </form>
 
 </div>
+<th:block th:fragment="js"></th:block>
 <script th:fragment="script">
     $('#submit').on('click',function () {
         var name = $('input[name="name"]').val();
@@ -38,7 +40,7 @@
             "data":{'name':name,'email':email},
             "dataType":"json",
             "success":function (res) {
-                alert(res.msg);
+                layer.alert(res.msg);
             }
         })
     })

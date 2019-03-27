@@ -1,83 +1,160 @@
 <!DOCTYPE html>
-<html th:fragment="layout (title, content,script)" xmlns:th="http://www.thymeleaf.org">
+<html th:fragment="layout (title,content,script,links,js)" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:replace="${title}">Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+    <!-- zui -->
+    <link href="/static/zui/css/zui.min.css" rel="stylesheet">
+    <link href="/static/zui/lib/datetimepicker/datetimepicker.min.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <!--/* Per-page placeholder for additional links */-->
+    <th:block th:replace="${links}"/>
 </head>
 <body>
-<nav class="navbar navbar-default" th:fragment="nav">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">麦穗</a>
-        </div>
+<nav class="navbar navbar-inverse " role="navigation" th:fragment="nav">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">zui管理系统</a>
+    </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Link</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">博客</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">vison <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-collapse-example">
+        <ul class="nav navbar-nav navbar-avatar navbar-right">
+            <li>
+                <a href="/shop/order/orderList" class="header-tooltip" style="margin-top:8px;" data-toggle="tooltip"
+                   data-placement="bottom" data-container="body" title="" data-original-title="4条未处理订单">
+                    <i style="font-size: 25px;" class="icon-shopping-cart icon-xlarge text-default"></i>
+                    <b style="display: block;" class="badge badge-notes bg-default count-n">4</b>
+                </a>
+            </li>
+            <li>
+                <a href="/shop/user/message" class="header-tooltip" style="margin-top:8px;" data-toggle="tooltip"
+                   data-placement="bottom" data-container="body" title="" data-original-title="2条未读信息">
+                    <i style="font-size: 25px;" class="icon-comment-alt icon-xlarge text-default"></i>
+                    <b style="display: block;" class="badge badge-notes bg-danger count-n">2</b>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">曹麦穗
+                    <span class="thumb-small avatar inline">
+                                    <img src="/static/Images/avatar/avatar.jpg" alt="Mika Sokeil" class="img-circle">
+                                </span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/shop/index/loginOut.html"><i class="icon icon-off"></i> 注销</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div><!-- /.navbar-collapse -->
 </nav>
-<div th:replace="${content}">
-    <p>Layout content</p>
+<div id="left-bar" style="width: 200px">
+    <nav class="menu" id="left-menu" data-toggle="menu">
+        <ul id="treeMenu" class="tree tree-menu" data-ride="tree">
+            <li><a href="/index.html"><i class="icon-home"></i> 主面板</a></li>
+            <li class="open"><a href="#"><i class="icon-user"></i>系统管理</a>
+                <ul class="nav">
+                    <li class="active">
+                        <a href="/admin/list"><i class="icon-shopping-cart"></i>管理员管理</a>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="#"><i class="icon-yen"></i>编辑器</a>
+                <ul class="nav">
+                    <li>
+                        <a href="editor-md.html"><i class="icon-shopping-cart"></i>markdown编辑器</a>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="#"><i class="icon-dashboard"></i>工作中心</a>
+                <ul class="nav">
+                    <li>
+                        <a href="orderlist.html"><i class="icon-shopping-cart"></i>订单管理</a>
+                    </li>
+                    <li>
+                        <a href=""><i class="icon-shopping-cart"></i>收银开单</a>
+                    </li>
+                    <li>
+                        <a href=""><i class="icon-line-chart"></i>交易统计</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="icon-comments-alt"></i>评论管理</a>
+                <ul class="nav">
+
+                </ul>
+            </li>
+            <li>
+                <a href=""><i class="icon-tasks"></i> 消息中心
+                    <span class="label label-badge label-danger pull-right">2</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
+<div id="main-content">
+    <div id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <a href=""><i class="icon icon-home"></i> 主页</a>
+            </li>
+            <li>
+                <a id="parent-bread" href="#">工作中心</a>
+            </li>
+            <li id="children-bread" class="active">店铺管理</li>
+        </ul>
+    </div>
+    <div id="page-content" th:insert="${content}">
+        <p>Layout content</p>
+    </div>
+</div>
+
 <footer>
     Layout footer
 </footer>
+<!-- 在此处挥洒你的创意 -->
+<!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+<script src="/static/js/jquery.js"></script>
+<!-- ZUI Javascript组件 -->
+<script src="/static/zui/js/zui.min.js"></script>
+<script src="/static/zui/lib/datetimepicker/datetimepicker.min.js"></script>
+<script src="/static/lib/layer/layer.js"></script>
+<th:block th:replace="${js}"></th:block>
+<script>
+    $(function () {
+        $('#left-bar').add('#main-content').height($(window).height() - $('header').height());
+        $('.header-tooltip').tooltip();
+        // 手动通过点击模拟高亮菜单项
+        $('#treeMenu').on('click', 'a', function () {
+            $('#treeMenu li.active').removeClass('active');
+            $(this).parens('li').addClass('active');
+        });
+    });
+</script>
+<script>
+    $('#show-user').click(function () {
+        //页面层-自定义
+        //iframe层-父子操作
+        layer.open({
+            type: 2,
+            area: ['60%', '530px'],
+            fix: false, //不固定
+            maxmin: true,
+            content: 'profile.html'
+        });
+    });
+</script>
 <script th:replace="${script}">
 
 </script>

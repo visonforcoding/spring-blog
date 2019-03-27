@@ -1,85 +1,162 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{ common/header :: header }">
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<html th:replace="~{common/layout :: layout(~{::title}, ~{::content},~{::script},~{::links},~{::js})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>管理员管理</title>
+    <th:block th:fragment="links">
+        <!--jqgrid-->
+        <link rel="stylesheet" type="text/css" href="/static/lib/jqgrid/css/ui.jqgrid.css">
+        <link rel="stylesheet" type="text/css" href="/static/lib/jqgrid/css/ui.ace.css">
+    </th:block>
 </head>
 <body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">麦穗</a>
-        </div>
+<div class="container" id="content" th:fragment="content">
+    <div class="table-toolbar">
+        <form id="table-bar-form" class="form-inline">
+            <div class="form-group">
+                <label for="exampleInputInviteCode3">名字</label>
+                <input type="text" name="name" class="form-control" id="exampleInputInviteCode3"
+                       placeholder="XXXX-XXXX-XXXX">
+            </div>
+            <button onclick="doSearch()" id="search" type="button" class="btn btn-primary">搜索</button>
+        </form>
+    </div>
+    <div class="col-xs-12">
+        <table id="list">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+        <div id="pager"></div>
+    </div>
+</div>
+<th:block th:fragment="js">
+    <script src="/static/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <script src="/static/lib/jqgrid/js/i18n/grid.locale-cn.js"></script>
+</th:block>
+<script th:fragment="script">
+    $(function () {
+        $("#list").jqGrid({
+            url: "/admin/get_list",
+            datatype: "json",
+            mtype: "get",
+            colNames: ["id", "名字", "用户名", "", "操作"],
+            colModel: [
+                {name: "id", editable: true, align: "center"},
+                {name: "name", editable: true},
+                {name: "email", editable: true},
+                {name: "actionLoc", viewable: false, formatter: "actions"},
+                {name: "actionBtn", viewable: false, sortable: false, formatter: actionFormatrer},
+            ],
+            pager: "#pager",
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            sortname: "ctime",
+            sortorder: "desc",
+            viewrecords: true,
+            gridview: true,
+            autoencode: true,
+            caption: '订单列表',
+            autowidth: true,
+            shrinkToFit: false,
+            height: 'auto',
+            rownumbers: true,
+            jsonReader: {
+                root: "rows",
+                page: "page",
+                total: "total",
+                records: "records",
+                repeatitems: false,
+                id: "0"
+            },
+        }).navGrid('#pager', {edit: true, add: true, del: true, view: true}, searchFn, editFn, addFn, delFn, viewFn);
+    });
+    var searchFn = {};
+    var editFn = {
+        jqModal: true,
+        reloadAfterSubmit: true,
+        closeOnEscape: true,
+        savekey: [true, 13],
+        closeAfterEdit: true,
+        url: '',
+        beforeShowForm: function (form) {
+            $('#tr_password', form).hide();
+        },
+        afterSubmit: function (response) {
+            var responseText = $.parseJSON(response.responseText);
+            var success = responseText.success;
+            var message = responseText.message;
+            return [success, message];
+        }
+    };
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Link</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">博客</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">vison <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
-<table class="table">
-    <!-- On rows -->
-    <tr class="active">...</tr>
-    <tr class="success">...</tr>
-    <tr class="warning">...</tr>
-    <tr class="danger">...</tr>
-    <tr class="info">...</tr>
+    function edit() {
 
-    <!-- On cells (`td` or `th`) -->
-    <tr>
-        <td class="active">...</td>
-        <td class="success">...</td>
-        <td class="warning">...</td>
-        <td class="danger">...</td>
-        <td class="info">...</td>
-    </tr>
-</table>
+    }
+    ;
+
+    function addFn() {
+        console.log('add');
+    }
+
+    function delFn() {
+        console.log('add');
+    }
+
+    function viewFn() {
+        console.log('view');
+    }
+
+    function actionFormatrer(cellvalue, options, rowObject) {
+        var response = '';
+        if (rowObject.statusText === '申请退款') {
+            response = '<a  onClick="rebackPay(' + rowObject.id + ')" class="label grid-btn label-badge label-danger">确认退款</a>';
+            response += '<a onClick="refuseFn(' + rowObject.id + ')" class="label grid-btn label-badge label-danger">拒绝退款</a>';
+        }
+        if (rowObject.statusText === '已评价') {
+            response = '<a class="label grid-btn label-badge label-danger">查看评价</a>';
+        }
+        return response;
+    }
+
+    function refuseFn(id) {
+        //拒绝退款
+        $('#refuse-order-id').val(id);
+        $('#refundModal').modal({show: true});
+    }
+
+    function rebackPay(id) {
+        //确认退款
+        layer.confirm('确定确认退款？', {
+            btn: ['确认', '取消'] //按钮
+        }, function () {
+            //确认退款
+            $.ajax({
+                url: '/shop/order/rebackPay',
+                type: 'post',
+                dataType: 'json',
+                data: {id: id},
+                success: function (res) {
+                    layer.msg(res.msg, {icon: 1});
+                }
+            });
+        }, function () {
+            // layer.msg('奇葩么么哒', {shift: 6});
+        });
+    }
+
+    function doSearch() {
+        //搜索
+        var postData = $('#table-bar-form').serializeArray();
+        var data = {};
+        $.each(postData, function (i, n) {
+            data[n.name] = n.value;
+        });
+        $.zui.store.pageSet('searchData', data); //本地存储查询参数 供导出操作等调用
+        $("#list").jqGrid('setGridParam', {
+            postData: data
+        }).trigger("reloadGrid");
+    }
+</script>
 </body>
 </html>
