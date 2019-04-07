@@ -8,12 +8,13 @@ import javax.persistence.Id;
 @Entity // This tells Hibernate to make a table out of this class
 public class Admin {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String name;
 
     private String email;
+
 
     public Integer getId() {
         return id;

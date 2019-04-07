@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html th:replace="~{common/layout :: layout(~{::title}, ~{::content},~{::script},~{::links},~{::js})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>用户添加</title>
+    <th:block th:fragment="links"></th:block>
+</head>
+<body>
+<div class="container" id="content" th:fragment="content">
+    <form id="adminAdd">
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" name="email" class="form-control" th:value="${admin.email}"  id="exampleInputEmail1" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">用户名</label>
+            <input type="text" name="name" class="form-control" th:value="${admin.name}" id="exampleInputPassword1" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputFile">File input</label>
+            <input type="file" id="exampleInputFile">
+            <p class="help-block">Example block-level help text here.</p>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox"> Check me out
+            </label>
+        </div>
+        <button id="submit" type="button" class="btn btn-default">Submit</button>
+    </form>
+
+</div>
+<th:block th:fragment="js"></th:block>
+<script th:fragment="script">
+    $('#submit').on('click',function () {
+        var name = $('input[name="name"]').val();
+        var email = $('input[name="email"]').val();
+        $.ajax({
+            "url":'/admin/edit',
+            "type":"post",
+            "data":{'name':name,'email':email},
+            "dataType":"json",
+            "success":function (res) {
+                layer.alert(res.msg);
+            }
+        })
+    })
+</script>
+</body>
+</html>
